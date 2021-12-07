@@ -1,12 +1,20 @@
 // Install vinValidator: npm i vin-validator
 // Docs here: https://www.npmjs.com/package/vin-validator
 var vinValidator = require('vin-validator');
+const Car = require('./cars-model');
+
 
 const checkCarId = (req, res, next) => {
-// returns a 404 with `{ message: "car with id <car id> is not found" }` if id does not exist in the db.
-console.log('MIDDLE: checkCarId');
-next();
-
+  // returns a 404 with `{ message: "car with id <car id> is not found" }` if id does not exist in the db.
+  console.log('MIDDLE: checkCarId');
+  Car.getById(req.params.id)
+    .then( response => {
+      req.car = response;
+      next();
+    })
+    .catch( error => {
+      res.status(500).json({ error: error.message })
+    })
 }
 
 const checkCarPayload = (req, res, next) => {
